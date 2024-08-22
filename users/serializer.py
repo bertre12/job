@@ -6,9 +6,11 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
+# Отображение данных.
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['id', 'username', 'password']  # Отображение выборочно.
+        # fields = '__all__'  # Отображение всех данных.
 
     def create(self, validated_data):
         user = User.objects.create_user(username=validated_data['username'], password=validated_data['password'])
