@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import status, generics, viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializer import UserSerializer
@@ -24,18 +25,20 @@ from .serializer import UserSerializer
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class CreateUserView(generics.CreateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#
-#
-# # Подключение пагинации для определённых запросов.
-#
-# class UserListPagination(PageNumberPagination):
-#     page_size = 5  # Количества страниц отображения по умолчанию.
-#     # Для изменения количества страниц отображения при GET запросе, чем по умолчанию.(&page_size=...)
-#     page_size_query_param = 'page_size'
-#     max_page_size = 10000
+class CreateUserView(generics.CreateAPIView):  # Создание нового пользователя для всех.
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+# Подключение пагинации для определённых запросов.
+
+class UserListPagination(PageNumberPagination):
+    page_size = 5  # Количества страниц отображения по умолчанию.
+    # Для изменения количества страниц отображения при GET запросе, чем по умолчанию.(&page_size=...)
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+
+
 #
 #
 # # Отображение списка всех пользователей: через APIView и ListAPIView.
@@ -46,18 +49,26 @@ from .serializer import UserSerializer
 # #         return Response({"username": list(lst)})
 #
 #
-# class UserList(generics.ListAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#     pagination_class = UserListPagination  # Подключение пагинации.
-#
-#
-# # Изменение данных по id.
-# # class UserUpdate(generics.UpdateAPIView):
-# #     queryset = User.objects.all()
-# #     serializer_class = UserSerializer
-
-# Универсальная модель для создания, редактирования пользователей.
-class UserViewSet(viewsets.ModelViewSet):
+class UserList(generics.ListAPIView):  # Только чтение.
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = UserListPagination  # Подключение пагинации.
+
+
+# Изменение данных по id.
+# class UserUpdate(generics.UpdateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+
+# Создание, редактирование и удаление после входа в систему.
+class UserDelete(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)  # Добавление прав доступа.
+
+# # Универсальная модель для создания, редактирования пользователей.
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = (IsAuthenticatedOrReadOnly,)  # Добавление прав доступа.
