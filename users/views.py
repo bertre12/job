@@ -6,6 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializer import UserSerializer
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+
 
 # Создание нового пользователя и проверка на дублирование.
 
@@ -67,8 +70,33 @@ class UserDelete(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)  # Добавление прав доступа.
 
+
 # # Универсальная модель для создания, редактирования пользователей.
 # class UserViewSet(viewsets.ModelViewSet):
 #     queryset = User.objects.all()
 #     serializer_class = UserSerializer
 #     permission_classes = (IsAuthenticatedOrReadOnly,)  # Добавление прав доступа.
+
+# Вход на страницу сайта.
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Перенаправление на другую страницу после успешного входа.
+        else:
+            return render(request, 'users/login.html', {'error_message': 'Invalid credentials'})
+    return render(request, 'users/login.html')
+
+
+# Домашняя страница сайта до/после входа зарегистрированного пользователя.
+def home(request):
+    if request.user.is_authenticated:
+        username = request.user.username
+        context = {'username': username}
+    else:
+        context = {'username': None}
+
+    return render(request, 'home.html', context)
