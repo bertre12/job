@@ -12,4 +12,6 @@ urlpatterns = [
     # path('users/<int:pk>/', UserUpdate.as_view(), name='user-list'),
     path('users/<int:pk>/', UserDelete.as_view(), name='user-list'),
     # path('api/', include(router.urls)),
+    path('login/', login_view, name='login'),
+    path('home/', home, name='home'),
 ]
