@@ -9,6 +9,9 @@
 </head>
 <body>
     <h2>Login</h2>
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         <label for="username">Имя:</label>
@@ -16,7 +19,12 @@
         <label for="password">Пароль:</label>
         <input type="password" id="password" name="password">
         <button type="submit">Войти</button>
+        <br>
+        <br>
+        <button type="submit" formaction="http://127.0.0.1:8000/home/">Домашняя страница</button>
+        <button type="submit" formaction="http://127.0.0.1:8000/create_user/">Регистрация</button>
     </form>
-
+{#    <br>#}
+{#    <button onclick="document.location='http://127.0.0.1:8000/home/'">Перейти</button>#}
 </body>
 </html>

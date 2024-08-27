@@ -82,12 +82,18 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return render(request, 'users/login.html', {'error_message': 'Пользователь не найден'})
+
+        if user.check_password(password):
             login(request, user)
             return redirect('home')  # Перенаправление на другую страницу после успешного входа.
         else:
-            return render(request, 'users/login.html', {'error_message': 'Invalid credentials'})
+            return render(request, 'users/login.html', {'error_message': 'Неверные учетные данные'})
+
     return render(request, 'users/login.html')
 
 
