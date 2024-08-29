@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+from student.models import Student
+
+
+def your_student(request):
+    data = Student.objects.all()
+    return render(request, 'student/student.html', {'data': data})

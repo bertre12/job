@@ -1,0 +1,17 @@
+<!-- Наследование -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <h1>Данные:</h1>
+    <ul>
+        {% for item in data %}
+            <li> ФИО - {{ item.name }}</li>
+            <li>№ телефона - {{ item.phone }}</li>
+            <li> email - {{ item.e_mail }}</li>
+            <li>Количество баллов - {{ item.number_of_points }}</li>
+            <li>№ группы - {{ item.group_number }}</li>
+        {% endfor %}
+
+{% endblock %}
